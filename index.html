@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Reggae+One&display=swap" rel="stylesheet" />
+        <title>サカバンバスピス</title>
+    </head>
+    <body>
+        <div id="face">
+            <div id="eyes-group">
+                <div class="eye-outer">
+                    <div class="eye-inner"></div>
+                </div>
+                <div class="eye-outer">
+                    <div class="eye-inner"></div>
+                </div>
+            </div>
+            <div id="nose-group">
+                <div class="nose"></div>
+                <div class="nose"></div>
+            </div>
+            <div id="mouse"></div>
+        </div>
+        <div id="message">サカバンバスピスに挨拶しよう</div>
+        <button id="move-eyes-button">目を動かす</button>
+        <style>
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100vw;
+                height: 100vh;
+                font-family: sans-serif;
+                overflow: hidden;
+            }
+
+            body.terror-sacabambaspis {
+                background: black;
+            }
+
+            #face {
+                width: 30vmin;
+                height: 20vmin;
+                background: gray;
+                border-radius: 100%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            body.terror-sacabambaspis #face {
+                animation: terror-animation 5s linear forwards;
+            }
+
+            @keyframes terror-animation {
+                0% {
+                    transform: translate(-50%, -50%) scale(1);
+                }
+                100% {
+                    transform: translate(-50%, -50%) scale(3);
+                }
+            }
+
+            #eyes-group {
+                width: 100%;
+                height: 5vmin;
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .eye-outer {
+                background: white;
+                width: 3vmin;
+                height: 3vmin;
+                border-radius: 100%;
+                margin: 0 3.5vmin;
+                position: relative;
+            }
+
+            .eye-inner {
+                width: 60%;
+                height: 60%;
+                background: black;
+                border-radius: 100%;
+                position: absolute;
+                top: 40%;
+                left: 40%;
+            }
+
+            .eye-inner.disabled {
+                top: 50%;
+                left: 50%;
+            }
+
+            body.terror-sacabambaspis .eye-inner {
+                background: red;
+            }
+
+            body.terror-sacabambaspis .eye-inner::before {
+                content: "";
+                display: block;
+                width: 100%;
+                height: 100%;
+                background: red;
+                filter: blur(1vmin);
+            }
+
+            #nose-group {
+                width: 100%;
+                height: 1vmin;
+                position: absolute;
+                top: 55%;
+                opacity: 0.2;
+                display: flex;
+                justify-content: center;
+            }
+
+            .nose {
+                width: 1vmin;
+                height: 0.5vmin;
+                border-radius: 100%;
+                background: black;
+                margin: 0 1vmin;
+            }
+
+            #mouse {
+                background: gray;
+                width: 0.5vmin;
+                height: 0.2vmin;
+                border-top: 1.7vmin solid black;
+                border-right: 4vmin solid transparent;
+                border-left: 4vmin solid transparent;
+                position: absolute;
+                top: 62%;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            #message {
+                position: absolute;
+                top: 70%;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            body.terror-sacabambaspis #message {
+                color: red;
+                font-weight: bold;
+                font-family: "Reggae One", cursive;
+            }
+
+            #move-eyes-button {
+                position: absolute;
+                bottom: 2rem;
+                right: 2rem;
+                cursor: pointer;
+                background: skyblue;
+                border: none;
+                color: black;
+                padding: 0.5em 1em;
+                border-radius: 0.5em;
+            }
+        </style>
+        <script src="https://unpkg.com/cb-konami-js@0.1.3/dist/konami.min.js"></script>
+        <script>
+            const konami = new Konami();
+            konami.init(() => {
+                document.body.classList.add("terror-sacabambaspis");
+            });
+
+            const eyes = document.querySelectorAll(".eye-inner");
+            const button = document.querySelector("#move-eyes-button");
+
+            let enabled = false;
+
+            button.addEventListener("click", () => {
+                if (button.hasAttribute("data-enabled")) {
+                    button.removeAttribute("data-enabled");
+                    button.innerText = "目を動かす";
+                    enabled = false;
+                } else {
+                    button.setAttribute("data-enabled", "");
+                    button.innerText = "目を動かさない";
+                    enabled = true;
+                }
+            });
+
+            document.body.addEventListener("mousemove", (event) => {
+                if (!enabled) {
+                    eyes.forEach((eye) => {
+                        eye.classList.add("disabled");
+                        eye.style.transform = `translate(-50%, -50%)`;
+                    });
+                    return;
+                }
+
+                const mouseX = event.clientX;
+                const mouseY = event.clientY;
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+                const centerX = windowWidth / 2;
+                const centerY = windowHeight / 2;
+
+                const deltaX = mouseX - centerX;
+                const deltaY = mouseY - centerY;
+                let angle = Math.atan2(deltaY, deltaX) * (180 / Math.PI);
+                angle = (angle + 360) % 360;
+                angle = (angle + 90) % 360;
+
+                eyes.forEach((eye) => {
+                    eye.classList.remove("disabled");
+                    eye.style.transform = `translate(-30%, -30%) rotate(${angle}deg)translate(-30%, -30%)`;
+                });
+            });
+        </script>
+    </body>
+</html>
